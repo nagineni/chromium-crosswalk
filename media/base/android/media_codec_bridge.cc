@@ -101,7 +101,7 @@ bool MediaCodecBridge::IsAvailable() {
 
 // static
 void MediaCodecBridge::GetCodecsInfo(
-    std::vector<CodecsInfo>* codecs_info) {
+    std::vector<CodecsInfo>* codecs_info, bool allow_encoders) {
   JNIEnv* env = AttachCurrentThread();
   if (!IsAvailable())
     return;
@@ -109,7 +109,7 @@ void MediaCodecBridge::GetCodecsInfo(
   std::string mime_type;
   std::string codec_name;
   ScopedJavaLocalRef<jobjectArray> j_codec_info_array =
-      Java_MediaCodecBridge_getCodecsInfo(env);
+      Java_MediaCodecBridge_getCodecsInfo(env, allow_encoders);
   jsize len = env->GetArrayLength(j_codec_info_array.obj());
   for (jsize i = 0; i < len; ++i) {
     ScopedJavaLocalRef<jobject> j_info(
@@ -124,6 +124,8 @@ void MediaCodecBridge::GetCodecsInfo(
     ConvertJavaStringToUTF8(env, j_codec_name.obj(), &info.name);
     info.secure_decoder_supported =
         Java_CodecInfo_isSecureDecoderSupported(env, j_info.obj());
+    info.isEncoder =
+        Java_CodecInfo_isEncoder(env, j_info.obj());
     codecs_info->push_back(info);
   }
 }
@@ -148,7 +150,7 @@ bool MediaCodecBridge::CanDecode(const std::string& codec, bool is_secure) {
 bool MediaCodecBridge::IsKnownUnaccelerated(const std::string& mime_type) {
   std::string codec_type = AndroidMimeTypeToCodecType(mime_type);
   std::vector<media::MediaCodecBridge::CodecsInfo> codecs_info;
-  media::MediaCodecBridge::GetCodecsInfo(&codecs_info);
+  media::MediaCodecBridge::GetCodecsInfo(&codecs_info, false);
   for (size_t i = 0; i < codecs_info.size(); ++i) {
     if (codecs_info[i].codecs == codec_type) {
       // It would be nice if MediaCodecInfo externalized some notion of

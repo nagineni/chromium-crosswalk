@@ -56,10 +56,11 @@ class MEDIA_EXPORT MediaCodecBridge {
     std::string codecs;
     std::string name;
     bool secure_decoder_supported;
+    bool isEncoder;
   };
 
   // Get a list of supported codecs.
-  static void GetCodecsInfo(std::vector<CodecsInfo>* codecs_info);
+  static void GetCodecsInfo(std::vector<CodecsInfo>* codecs_info, bool allow_encoders);
 
   virtual ~MediaCodecBridge();
 

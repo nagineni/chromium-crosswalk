@@ -85,11 +85,13 @@ class MediaCodecBridge {
         private final String mCodecType;  // e.g. "video/x-vnd.on2.vp8".
         private final String mCodecName;  // e.g. "OMX.google.vp8.decoder".
         private final boolean mIsSecureDecoderSupported;
+        private final boolean mIsEncoder;
 
-        private CodecInfo(String codecType, String codecName, boolean isSecureDecoderSupported) {
+        private CodecInfo(String codecType, String codecName, boolean isSecureDecoderSupported, boolean isEncoder) {
             mCodecType = codecType;
             mCodecName = codecName;
             mIsSecureDecoderSupported = isSecureDecoderSupported;
+            mIsEncoder = isEncoder;
         }
 
         @CalledByNative("CodecInfo")
@@ -100,6 +102,9 @@ class MediaCodecBridge {
 
         @CalledByNative("CodecInfo")
         private boolean isSecureDecoderSupported() { return mIsSecureDecoderSupported; }
+
+        @CalledByNative("CodecInfo")
+        private boolean isEncoder() { return mIsEncoder; }
     }
 
     private static class DequeueOutputResult {
@@ -143,12 +148,13 @@ class MediaCodecBridge {
      * Get a list of supported android codec mimes.
      */
     @CalledByNative
-    private static CodecInfo[] getCodecsInfo() {
+    private static CodecInfo[] getCodecsInfo(boolean allowEncoders) {
         Map<String, CodecInfo> CodecInfoMap = new HashMap<String, CodecInfo>();
         int count = MediaCodecList.getCodecCount();
         for (int i = 0; i < count; ++i) {
             MediaCodecInfo info = MediaCodecList.getCodecInfoAt(i);
-            if (info.isEncoder()) {
+            boolean isEncoder = info.isEncoder();
+            if (isEncoder && !allowEncoders) {
                 continue;
             }
 
@@ -172,9 +178,9 @@ class MediaCodecBridge {
 
             String[] supportedTypes = info.getSupportedTypes();
             for (int j = 0; j < supportedTypes.length; ++j) {
-                if (!CodecInfoMap.containsKey(supportedTypes[j]) || secureDecoderSupported) {
+                if (allowEncoders || !CodecInfoMap.containsKey(supportedTypes[j]) || secureDecoderSupported) {
                     CodecInfoMap.put(supportedTypes[j], new CodecInfo(
-                        supportedTypes[j], codecString, secureDecoderSupported));
+                        supportedTypes[j], codecString, secureDecoderSupported, isEncoder));
                 }
             }
         }
