@@ -85,6 +85,7 @@
 #include "ui/gfx/native_widget_types.h"
 #include "ui/shell_dialogs/selected_file_info.h"
 #include "webkit/browser/fileapi/isolated_context.h"
+#include "xwalk/mobile/browser/browser_mediaplayer_manager.h"
 
 #if defined(OS_MACOSX)
 #include "content/browser/renderer_host/popup_menu_helper_mac.h"
@@ -240,6 +241,8 @@ RenderViewHostImpl::RenderViewHostImpl(
 #if defined(OS_ANDROID)
   media_player_manager_.reset(BrowserMediaPlayerManager::Create(this));
 #endif
+
+  media_player_manager_.reset(tizen::BrowserMediaPlayerManager::Create(this));
 
   unload_event_monitor_timeout_.reset(new TimeoutMonitor(base::Bind(
       &RenderViewHostImpl::OnSwappedOut, weak_factory_.GetWeakPtr(), true)));
