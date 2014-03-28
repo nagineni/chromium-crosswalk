@@ -761,6 +761,14 @@
         }],
       ],
     }],
+    ['tizen==1 or tizen_mobile == 1', {
+      'sources': [
+        '<(DEPTH)/xwalk/tizen/renderer/mediaplayer_impl.cc',
+        '<(DEPTH)/xwalk/tizen/renderer/mediaplayer_impl.h',
+        '<(DEPTH)/xwalk/tizen/renderer/renderer_mediaplayer_manager.cc',
+        '<(DEPTH)/xwalk/tizen/renderer/renderer_mediaplayer_manager.h',
+      ],
+    }],
   ],
   'target_conditions': [
     ['OS=="android"', {

@@ -608,6 +608,11 @@
         '<(DEPTH)/third_party/khronos',
       ],
     }],
+    ['tizen == 1 or tizen_mobile == 1', {
+      'sources': [
+        '<(DEPTH)/xwalk/tizen/common/media_player_messages.h',
+      ],
+    }],
     ['OS=="win" and directxsdk_exists=="True"', {
       'actions': [
       {

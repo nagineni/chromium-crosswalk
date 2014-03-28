@@ -1660,5 +1660,75 @@
         'browser/geolocation/wifi_data_provider_linux.cc',
       ],
     }],
+    ['tizen == 1 or tizen_mobile == 1', {
+      'sources': [
+        '<(DEPTH)/xwalk/tizen/browser/audio_session_manager.cc',
+        '<(DEPTH)/xwalk/tizen/browser/audio_session_manager.h',
+        '<(DEPTH)/xwalk/tizen/browser/audio_session_manager_init.cc',
+        '<(DEPTH)/xwalk/tizen/browser/audio_session_manager_init.h',
+        '<(DEPTH)/xwalk/tizen/browser/murphy_resource.cc',
+        '<(DEPTH)/xwalk/tizen/browser/murphy_resource.h',
+        '<(DEPTH)/xwalk/tizen/browser/murphy_resource_manager.cc',
+        '<(DEPTH)/xwalk/tizen/browser/murphy_resource_manager.h',
+        '<(DEPTH)/xwalk/tizen/browser/browser_mediaplayer_manager.cc',
+        '<(DEPTH)/xwalk/tizen/browser/browser_mediaplayer_manager.h',
+      ],
+      'variables': {
+        'generate_stubs_script': '../tools/generate_stubs/generate_stubs.py',
+        'extra_header': '../xwalk/tizen/browser/audio_session_manager_stub_headers.fragment',
+        'sig_files': ['../xwalk/tizen/browser/audio_session_manager.sigs'],
+        'outfile_type': 'posix_stubs',
+        'stubs_filename_root': 'audio_session_manager_stubs',
+        'project_path': 'xwalk/tizen/browser',
+        'intermediate_dir': '<(INTERMEDIATE_DIR)',
+        'output_root': '<(SHARED_INTERMEDIATE_DIR)/audio_session_manager',
+      },
+      'include_dirs': [
+        '<(output_root)',
+      ],
+      'actions': [
+        {
+          'action_name': 'generate_stubs',
+          'inputs': [
+          '<(generate_stubs_script)',
+          '<(extra_header)',
+          '<@(sig_files)',
+          ],
+          'outputs': [
+            '<(intermediate_dir)/<(stubs_filename_root).cc',
+            '<(output_root)/<(project_path)/<(stubs_filename_root).h',
+          ],
+          'action': ['python',
+            '<(generate_stubs_script)',
+            '-i', '<(intermediate_dir)',
+            '-o', '<(output_root)/<(project_path)',
+            '-t', '<(outfile_type)',
+            '-e', '<(extra_header)',
+            '-s', '<(stubs_filename_root)',
+            '-p', '<(project_path)',
+            '<@(_inputs)',
+          ],
+          'process_outputs_as_sources': 1,
+          'message': 'Generating audio session manager stubs for dynamic loading',
+        },
+      ],
+      'conditions': [
+        ['OS=="linux" or OS=="solaris"', {
+          'link_settings': {
+            'libraries': [
+            '-ldl',
+            ],
+          },
+        }],
+      ],
+      'dependencies': [
+        '../build/linux/system.gyp:audio_session_manager',
+        '../build/linux/system.gyp:resource_manager',
+      ],
+      'export_dependent_settings': [
+        '../build/linux/system.gyp:audio_session_manager',
+        '../build/linux/system.gyp:resource_manager',
+      ],
+    }],
   ],
 }

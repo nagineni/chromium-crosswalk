@@ -57,3 +57,6 @@
 #include "content/common/view_messages.h"
 #include "content/common/websocket_messages.h"
 #include "content/common/worker_messages.h"
+#if defined(OS_TIZEN)
+#include "xwalk/tizen/common/media_player_messages.h"
+#endif

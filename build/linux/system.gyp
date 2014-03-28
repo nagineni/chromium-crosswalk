@@ -1004,5 +1004,41 @@
         }],
       ],
     },
+    {
+      'target_name': 'audio_session_manager',
+      'type': 'none',
+      'toolsets': ['host', 'target'],
+      'conditions': [
+        ['tizen==1 or tizen_mobile==1', {
+          'direct_dependent_settings': {
+            'cflags': [
+              '<!@(<(pkg-config) --cflags audio-session-mgr)',
+            ],
+          },
+        }],
+      ],
+    },
+    {
+      'target_name': 'resource_manager',
+      'type': 'none',
+      'toolsets': ['host', 'target'],
+      'conditions': [
+        ['tizen==1 or tizen_mobile==1', {
+          'direct_dependent_settings': {
+            'cflags': [
+              '<!@(<(pkg-config) --cflags murphy-core murphy-common murphy-resource)',
+            ],
+          },
+          'link_settings': {
+            'ldflags': [
+              '<!@(<(pkg-config) --libs-only-L --libs-only-other murphy-ecore murphy-common murphy-resource murphy-glib)',
+            ],
+            'libraries': [
+              '<!@(<(pkg-config) --libs-only-l murphy-ecore murphy-common murphy-resource murphy-glib)',
+            ],
+          },
+        }],
+      ],
+    },
   ],
 }

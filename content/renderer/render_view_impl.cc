@@ -242,6 +242,11 @@
 #include "content/renderer/media/rtc_peer_connection_handler.h"
 #endif
 
+#if defined(OS_TIZEN)
+#include "xwalk/tizen/renderer/mediaplayer_impl.h"
+#include "xwalk/tizen/renderer/renderer_mediaplayer_manager.h"
+#endif
+
 using blink::WebAXObject;
 using blink::WebApplicationCacheHost;
 using blink::WebApplicationCacheHostClient;
@@ -738,6 +743,8 @@ RenderViewImpl::RenderViewImpl(RenderViewImplParams* params)
       body_background_color_(SK_ColorWHITE),
       expected_content_intent_id_(0),
       media_player_manager_(NULL),
+#elif defined(OS_TIZEN)
+      media_player_manager_(NULL),
 #endif
 #if defined(OS_WIN)
       focused_plugin_id_(-1),
@@ -860,6 +867,8 @@ void RenderViewImpl::Initialize(RenderViewImplParams* params) {
 #if defined(OS_ANDROID)
   media_player_manager_ = new RendererMediaPlayerManager(this);
   new JavaBridgeDispatcher(this);
+#elif defined(OS_TIZEN)
+  media_player_manager_ = new tizen::RendererMediaPlayerManager(this);
 #endif
 
   // The next group of objects all implement RenderViewObserver, so are deleted
@@ -2545,6 +2554,13 @@ blink::WebMediaPlayer* RenderViewImpl::CreateMediaPlayer(
                  base::Unretained(GetContentClient()->renderer()),
                  static_cast<RenderFrame*>(render_frame)),
       sink);
+
+#if defined(OS_TIZEN)
+  tizen::MediaPlayerImpl* media_player = new tizen::MediaPlayerImpl(
+      this, frame, client, AsWeakPtr(), media_player_manager_, params);
+  return media_player;
+#endif
+
   return new WebMediaPlayerImpl(frame, client, AsWeakPtr(), params);
 #endif  // defined(OS_ANDROID)
 }

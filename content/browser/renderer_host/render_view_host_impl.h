@@ -43,6 +43,12 @@ struct ViewHostMsg_ShowPopup_Params;
 struct FrameMsg_Navigate_Params;
 struct ViewMsg_PostMessage_Params;
 
+#if defined(OS_TIZEN)
+namespace tizen {
+class BrowserMediaPlayerManager;
+}
+#endif
+
 namespace base {
 class ListValue;
 }
@@ -759,6 +765,8 @@ class CONTENT_EXPORT RenderViewHostImpl
 #if defined(OS_ANDROID)
   // Manages all the android mediaplayer objects and handling IPCs for video.
   scoped_ptr<BrowserMediaPlayerManager> media_player_manager_;
+#elif defined(OS_TIZEN)
+  scoped_ptr<tizen::BrowserMediaPlayerManager> media_player_manager_;
 #endif
 
   // Used to swap out or shutdown this RVH when the unload event is taking too
