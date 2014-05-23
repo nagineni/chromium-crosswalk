@@ -132,6 +132,12 @@ namespace webkit_glue {
 class WebURLResponseExtraDataImpl;
 }
 
+#if defined(OS_TIZEN) && defined(ENABLE_MURPHY)
+namespace tizen {
+class RendererMediaPlayerManager;
+}
+#endif
+
 namespace content {
 class BrowserPluginManager;
 class DeviceOrientationDispatcher;
@@ -1337,6 +1343,11 @@ class CONTENT_EXPORT RenderViewImpl
 
   // A date/time picker object for date and time related input elements.
   scoped_ptr<RendererDateTimePicker> date_time_picker_client_;
+#elif defined(OS_TIZEN) && defined(ENABLE_MURPHY)
+  // The media player manager for managing all the media players on this view
+  // and for communicating with the murphy resource policy daemon in browser
+  // process.
+  tizen::RendererMediaPlayerManager* media_player_manager_;
 #endif
 
   // Plugins -------------------------------------------------------------------

@@ -792,6 +792,14 @@
         'renderer/media/crypto/ppapi_decryptor.h',
       ],
     }],
+    ['tizen==1 and enable_murphy==1', {
+      'sources': [
+        '<(DEPTH)/xwalk/tizen/renderer/mediaplayer_impl.cc',
+        '<(DEPTH)/xwalk/tizen/renderer/mediaplayer_impl.h',
+        '<(DEPTH)/xwalk/tizen/renderer/renderer_mediaplayer_manager.cc',
+        '<(DEPTH)/xwalk/tizen/renderer/renderer_mediaplayer_manager.h',
+      ],
+    }],
   ],
   'target_conditions': [
     ['OS=="android"', {

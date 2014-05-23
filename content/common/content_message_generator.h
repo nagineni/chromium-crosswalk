@@ -65,3 +65,6 @@
 #if defined(USE_MOJO)
 #include "content/common/mojo/mojo_messages.h"
 #endif
+#if defined(OS_TIZEN) && defined(ENABLE_MURPHY)
+#include "xwalk/tizen/common/media_player_messages.h"
+#endif

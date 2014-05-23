@@ -242,6 +242,11 @@
 #include "content/renderer/web_ui_mojo.h"
 #endif
 
+#if defined(OS_TIZEN) && defined(ENABLE_MURPHY)
+#include "xwalk/tizen/renderer/mediaplayer_impl.h"
+#include "xwalk/tizen/renderer/renderer_mediaplayer_manager.h"
+#endif
+
 using blink::WebAXObject;
 using blink::WebApplicationCacheHost;
 using blink::WebApplicationCacheHostClient;
@@ -684,6 +689,8 @@ RenderViewImpl::RenderViewImpl(RenderViewImplParams* params)
       body_background_color_(SK_ColorWHITE),
       expected_content_intent_id_(0),
       media_player_manager_(NULL),
+#elif defined(OS_TIZEN) && defined(ENABLE_MURPHY)
+      media_player_manager_(NULL),
 #endif
 #if defined(OS_WIN)
       focused_plugin_id_(-1),
@@ -807,6 +814,8 @@ void RenderViewImpl::Initialize(RenderViewImplParams* params) {
 
 #if defined(OS_ANDROID)
   media_player_manager_ = new RendererMediaPlayerManager(this);
+#elif defined(OS_TIZEN) && defined(ENABLE_MURPHY)
+  media_player_manager_ = new tizen::RendererMediaPlayerManager(this);
 #endif
 
   // The next group of objects all implement RenderViewObserver, so are deleted
@@ -2269,6 +2278,11 @@ blink::WebMediaPlayer* RenderViewImpl::CreateMediaPlayer(
                  static_cast<RenderFrame*>(render_frame)),
       RenderThreadImpl::current()->GetAudioRendererMixerManager()->CreateInput(
           routing_id_, render_frame->GetRoutingID()));
+#if defined(OS_TIZEN) && defined(ENABLE_MURPHY)
+  tizen::MediaPlayerImpl* media_player = new tizen::MediaPlayerImpl(
+      frame, client, AsWeakPtr(), media_player_manager_, params);
+  return media_player;
+#endif
   return new WebMediaPlayerImpl(frame, client, AsWeakPtr(), params);
 #endif  // defined(OS_ANDROID)
 }

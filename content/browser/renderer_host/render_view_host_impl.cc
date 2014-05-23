@@ -90,6 +90,8 @@
 #include "content/browser/renderer_host/popup_menu_helper_mac.h"
 #elif defined(OS_ANDROID)
 #include "content/browser/media/android/browser_media_player_manager.h"
+#elif defined(OS_TIZEN) && defined(ENABLE_MURPHY)
+#include "xwalk/tizen/browser/browser_mediaplayer_manager.h"
 #elif defined(OS_WIN)
 #include "base/win/win_util.h"
 #endif
@@ -237,6 +239,8 @@ RenderViewHostImpl::RenderViewHostImpl(
 
 #if defined(OS_ANDROID)
   media_player_manager_.reset(BrowserMediaPlayerManager::Create(this));
+#elif defined(OS_TIZEN) && defined(ENABLE_MURPHY)
+  media_player_manager_.reset(tizen::BrowserMediaPlayerManager::Create(this));
 #endif
 
   unload_event_monitor_timeout_.reset(new TimeoutMonitor(base::Bind(
