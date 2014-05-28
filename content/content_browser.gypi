@@ -1651,6 +1651,24 @@
         'browser/power_save_blocker_x11.cc',
       ],
     }],
+    ['tizen == 0', {
+      'sources': [
+        '<(DEPTH)/xwalk/mobile/browser/browser_mediaplayer_manager.cc',
+        '<(DEPTH)/xwalk/mobile/browser/browser_mediaplayer_manager.h',
+        '<(DEPTH)/xwalk/mobile/browser/murphy_mainloop.cc',
+        '<(DEPTH)/xwalk/mobile/browser/murphy_mainloop.h',
+        '<(DEPTH)/xwalk/mobile/browser/murphy_resource.cc',
+        '<(DEPTH)/xwalk/mobile/browser/murphy_resource.h',
+        '<(DEPTH)/xwalk/mobile/browser/murphy_resource_manager.cc',
+        '<(DEPTH)/xwalk/mobile/browser/murphy_resource_manager.h',
+      ],
+      'dependencies': [
+        '../build/linux/system.gyp:resource_manager',
+      ],
+      'export_dependent_settings': [
+        '../build/linux/system.gyp:resource_manager',
+      ],
+    }],
     ['os_bsd==1', {
       'sources/': [
         ['exclude', '^browser/gamepad/gamepad_platform_data_fetcher_linux\\.cc$'],

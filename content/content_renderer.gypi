@@ -773,6 +773,14 @@
         'renderer/media/crypto/ppapi_decryptor.h',
       ],
     }],
+    ['tizen_mobile == 0', {
+      'sources': [
+        '<(DEPTH)/xwalk/mobile/renderer/mediaplayer_impl.cc',
+        '<(DEPTH)/xwalk/mobile/renderer/mediaplayer_impl.h',
+        '<(DEPTH)/xwalk/mobile/renderer/renderer_mediaplayer_manager.cc',
+        '<(DEPTH)/xwalk/mobile/renderer/renderer_mediaplayer_manager.h',
+      ],
+    }],
   ],
   'target_conditions': [
     ['OS=="android"', {

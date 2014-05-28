@@ -124,6 +124,8 @@
 #include "content/renderer/media/android/webmediaplayer_android.h"
 #endif
 
+#include "xwalk/mobile/renderer/mediaplayer_impl.h"
+
 using blink::WebContextMenuData;
 using blink::WebData;
 using blink::WebDataSource;
@@ -1358,6 +1360,12 @@ blink::WebMediaPlayer* RenderFrameImpl::createMediaPlayer(
                  static_cast<RenderFrame*>(this)),
       RenderThreadImpl::current()->GetAudioRendererMixerManager()->CreateInput(
           render_view_->routing_id_, routing_id_));
+
+  tizen::MediaPlayerImpl* media_player = new tizen::MediaPlayerImpl(
+      frame, client, weak_factory_.GetWeakPtr(),
+      render_view_->media_player_manager_, params);
+  return media_player;
+
   return new WebMediaPlayerImpl(frame, client, weak_factory_.GetWeakPtr(),
                                 params);
 #endif  // defined(OS_ANDROID)

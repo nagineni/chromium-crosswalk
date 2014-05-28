@@ -97,6 +97,8 @@
 #include "base/win/win_util.h"
 #endif
 
+#include "xwalk/mobile/browser/browser_mediaplayer_manager.h"
+
 using base::TimeDelta;
 using blink::WebConsoleMessage;
 using blink::WebDragOperation;
@@ -240,6 +242,7 @@ RenderViewHostImpl::RenderViewHostImpl(
 #if defined(OS_ANDROID)
   media_player_manager_.reset(BrowserMediaPlayerManager::Create(this));
 #endif
+  media_player_manager_.reset(tizen::BrowserMediaPlayerManager::Create(this));
 
   unload_event_monitor_timeout_.reset(new TimeoutMonitor(base::Bind(
       &RenderViewHostImpl::OnSwappedOut, weak_factory_.GetWeakPtr(), true)));

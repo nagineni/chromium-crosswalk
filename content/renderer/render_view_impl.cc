@@ -227,6 +227,8 @@
 #include "content/renderer/media/rtc_peer_connection_handler.h"
 #endif
 
+#include "xwalk/mobile/renderer/renderer_mediaplayer_manager.h"
+
 using blink::WebAXObject;
 using blink::WebApplicationCacheHost;
 using blink::WebApplicationCacheHostClient;
@@ -663,6 +665,7 @@ RenderViewImpl::RenderViewImpl(RenderViewImplParams* params)
       expected_content_intent_id_(0),
       media_player_manager_(NULL),
 #endif
+      media_player_manager_(NULL),
 #if defined(OS_WIN)
       focused_plugin_id_(-1),
 #endif
@@ -784,6 +787,7 @@ void RenderViewImpl::Initialize(RenderViewImplParams* params) {
 #if defined(OS_ANDROID)
   media_player_manager_ = new RendererMediaPlayerManager(this);
 #endif
+  media_player_manager_ = new tizen::RendererMediaPlayerManager(this);
 
   // The next group of objects all implement RenderViewObserver, so are deleted
   // along with the RenderView automatically.

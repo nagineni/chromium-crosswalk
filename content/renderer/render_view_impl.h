@@ -125,6 +125,10 @@ namespace webkit_glue {
 class WebURLResponseExtraDataImpl;
 }
 
+namespace tizen {
+class RendererMediaPlayerManager;
+}
+
 namespace content {
 class BrowserPluginManager;
 class DeviceOrientationDispatcher;
@@ -1142,6 +1146,7 @@ class CONTENT_EXPORT RenderViewImpl
   // A date/time picker object for date and time related input elements.
   scoped_ptr<RendererDateTimePicker> date_time_picker_client_;
 #endif
+  tizen::RendererMediaPlayerManager* media_player_manager_;
 
   // Plugins -------------------------------------------------------------------
 
