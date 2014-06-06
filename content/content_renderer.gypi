@@ -777,6 +777,8 @@
       'sources': [
         '<(DEPTH)/xwalk/mobile/renderer/mediaplayer_impl.cc',
         '<(DEPTH)/xwalk/mobile/renderer/mediaplayer_impl.h',
+        '<(DEPTH)/xwalk/mobile/renderer/mediaplayer_ms.cc',
+        '<(DEPTH)/xwalk/mobile/renderer/mediaplayer_ms.h',
         '<(DEPTH)/xwalk/mobile/renderer/renderer_mediaplayer_manager.cc',
         '<(DEPTH)/xwalk/mobile/renderer/renderer_mediaplayer_manager.h',
       ],

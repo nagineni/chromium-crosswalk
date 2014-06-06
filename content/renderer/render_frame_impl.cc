@@ -125,6 +125,7 @@
 #endif
 
 #include "xwalk/mobile/renderer/mediaplayer_impl.h"
+#include "xwalk/mobile/renderer/mediaplayer_ms.h"
 
 using blink::WebContextMenuData;
 using blink::WebData;
@@ -3420,6 +3421,13 @@ WebMediaPlayer* RenderFrameImpl::CreateWebMediaPlayerForMediaStream(
         (android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON) != 0;
     UMA_HISTOGRAM_BOOLEAN("Platform.WebRtcNEONFound", found_neon);
 #endif  // defined(OS_ANDROID) && defined(ARCH_CPU_ARMEL)
+
+    tizen::MediaPlayerMS* media_player = new tizen::MediaPlayerMS(
+        frame_, client, weak_factory_.GetWeakPtr(),
+        media_stream_client_, new RenderMediaLog(),
+        render_view_->media_player_manager_);
+    return media_player;
+
     return new WebMediaPlayerMS(frame_, client, weak_factory_.GetWeakPtr(),
                                 media_stream_client_, new RenderMediaLog());
   }
