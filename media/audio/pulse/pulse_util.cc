@@ -267,16 +267,10 @@ bool CreateOutputStream(pa_threaded_mainloop** mainloop,
 #if defined(OS_TIZEN)
   PulseAudioOutputStream* data =
       static_cast<PulseAudioOutputStream*>(user_data);
-  pa_proplist* proplist = pa_proplist_new();
-  pa_proplist_sets(proplist, "resource.set.appid", data->app_id().c_str());
-  pa_proplist_sets(proplist, PA_PROP_MEDIA_ROLE, data->app_class().c_str());
-  *stream = pa_stream_new_with_proplist(*context, "Playback",
-                                        &sample_specifications,
-                                        map, proplist);
-  pa_proplist_free(proplist);
-#else
-  *stream = pa_stream_new(*context, "Playback", &sample_specifications, map);
+  pa_proplist_sets(property_list.get(), "resource.set.appid", data->app_id().c_str());
+  pa_proplist_sets(property_list.get(), PA_PROP_MEDIA_ROLE, data->app_class().c_str());
 #endif
+  *stream = pa_stream_new(*context, "Playback", &sample_specifications, map);
   RETURN_ON_FAILURE(*stream, "failed to create PA playback stream");
 
   pa_stream_set_state_callback(*stream, stream_callback, user_data);
