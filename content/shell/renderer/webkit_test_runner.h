@@ -25,6 +25,7 @@ namespace blink {
 class WebBatteryStatus;
 class WebDeviceMotionData;
 class WebDeviceOrientationData;
+class WebDeviceProximityData;
 struct WebRect;
 }
 
@@ -63,6 +64,8 @@ class WebKitTestRunner : public RenderViewObserver,
       const blink::WebDeviceOrientationData& data) OVERRIDE;
   virtual void SetScreenOrientation(
       const blink::WebScreenOrientationType& orientation) OVERRIDE;
+  void SetDeviceProximityData(
+      const blink::WebDeviceProximityData& data) OVERRIDE;
   virtual void ResetScreenOrientation() OVERRIDE;
   virtual void DidChangeBatteryStatus(
       const blink::WebBatteryStatus& status) OVERRIDE;

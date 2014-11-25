@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
- * Android implementation of the device {motion|orientation|light} APIs.
+ * Android implementation of the device {motion|orientation|light|proximity} APIs.
  */
 @JNINamespace("content")
 class DeviceSensors implements SensorEventListener {
@@ -66,6 +66,7 @@ class DeviceSensors implements SensorEventListener {
     static final int DEVICE_ORIENTATION = 0;
     static final int DEVICE_MOTION = 1;
     static final int DEVICE_LIGHT = 2;
+    static final int DEVICE_PROXIMITY = 3;
 
     static final Set<Integer> DEVICE_ORIENTATION_SENSORS = CollectionUtil.newHashSet(
             Sensor.TYPE_ROTATION_VECTOR);
@@ -76,12 +77,15 @@ class DeviceSensors implements SensorEventListener {
             Sensor.TYPE_GYROSCOPE);
     static final Set<Integer> DEVICE_LIGHT_SENSORS = CollectionUtil.newHashSet(
             Sensor.TYPE_LIGHT);
+    static final Set<Integer> DEVICE_PROXIMITY_SENSORS = CollectionUtil.newHashSet(
+            Sensor.TYPE_PROXIMITY);
 
     @VisibleForTesting
     final Set<Integer> mActiveSensors = new HashSet<Integer>();
     boolean mDeviceLightIsActive = false;
     boolean mDeviceMotionIsActive = false;
     boolean mDeviceOrientationIsActive = false;
+    boolean mDeviceProximityIsActive = false;
 
     protected DeviceSensors(Context context) {
         mAppContext = context.getApplicationContext();
@@ -95,7 +99,7 @@ class DeviceSensors implements SensorEventListener {
      * @param rateInMilliseconds Requested callback rate in milliseconds. The
      *            actual rate may be higher. Unwanted events should be ignored.
      * @param eventType Type of event to listen to, can be either DEVICE_ORIENTATION or
-     *                  DEVICE_MOTION or DEVICE_LIGHT.
+     *                  DEVICE_MOTION or DEVICE_LIGHT or DEVICE_PROXIMITY.
      * @return True on success.
      */
     @CalledByNative
@@ -112,6 +116,9 @@ class DeviceSensors implements SensorEventListener {
                     break;
                 case DEVICE_LIGHT:
                     success = registerSensors(DEVICE_LIGHT_SENSORS, rateInMilliseconds, true);
+                    break;
+                case DEVICE_PROXIMITY:
+                    success = registerSensors(DEVICE_PROXIMITY_SENSORS, rateInMicroseconds, true);
                     break;
                 default:
                     Log.e(TAG, "Unknown event type: " + eventType);
@@ -153,6 +160,9 @@ class DeviceSensors implements SensorEventListener {
                     if (mDeviceLightIsActive) {
                         sensorsToRemainActive.addAll(DEVICE_LIGHT_SENSORS);
                     }
+                    if (mDeviceProximityIsActive) {
+                        sensorsToRemainActive.addAll(DEVICE_PROXIMITY_SENSORS);
+                    }
                     break;
                 case DEVICE_MOTION:
                     if (mDeviceOrientationIsActive) {
@@ -161,6 +171,9 @@ class DeviceSensors implements SensorEventListener {
                     if (mDeviceLightIsActive) {
                         sensorsToRemainActive.addAll(DEVICE_LIGHT_SENSORS);
                     }
+                    if (mDeviceProximityIsActive) {
+                        sensorsToRemainActive.addAll(DEVICE_PROXIMITY_SENSORS);
+                    }
                     break;
                 case DEVICE_LIGHT:
                     if (mDeviceMotionIsActive) {
@@ -168,6 +181,20 @@ class DeviceSensors implements SensorEventListener {
                     }
                     if (mDeviceOrientationIsActive) {
                         sensorsToRemainActive.addAll(DEVICE_ORIENTATION_SENSORS);
+                    }
+                    if (mDeviceProximityIsActive) {
+                        sensorsToRemainActive.addAll(DEVICE_PROXIMITY_SENSORS);
+                    }
+                    break;
+                case DEVICE_PROXIMITY:
+                    if (mDeviceMotionIsActive) {
+                        sensorsToRemainActive.addAll(DEVICE_MOTION_SENSORS);
+                    }
+                    if (mDeviceOrientationIsActive) {
+                        sensorsToRemainActive.addAll(mDeviceOrientationSensors);
+                    }
+                    if (mDeviceLightIsActive) {
+                        sensorsToRemainActive.addAll(DEVICE_LIGHT_SENSORS);
                     }
                     break;
                 default:
@@ -233,6 +260,11 @@ class DeviceSensors implements SensorEventListener {
             case Sensor.TYPE_LIGHT:
                 if (mDeviceLightIsActive) {
                     gotLight(values[0]);
+                }
+                break;
+            case Sensor.TYPE_PROXIMITY:
+                if (mDeviceProximityIsActive) {
+                    gotProximity(values[0], 0, 0);
                 }
                 break;
             default:
@@ -371,6 +403,9 @@ class DeviceSensors implements SensorEventListener {
             case DEVICE_LIGHT:
                 mDeviceLightIsActive = value;
                 return;
+            case DEVICE_PROXIMITY:
+                mDeviceProximityIsActive = value;
+                return;
         }
     }
 
@@ -460,6 +495,14 @@ class DeviceSensors implements SensorEventListener {
         }
     }
 
+    protected void gotProximity(double value, double min, double max) {
+        synchronized (mNativePtrLock) {
+            if (mNativePtr != 0) {
+                nativeGotProximity(mNativePtr, value, min, max);
+            }
+        }
+    }
+
     private Handler getHandler() {
         // TODO(timvolodine): Remove the mHandlerLock when sure that getHandler is not called
         // from multiple threads. This will be the case when device motion and device orientation
@@ -523,6 +566,13 @@ class DeviceSensors implements SensorEventListener {
     private native void nativeGotLight(
             long nativeSensorManagerAndroid,
             double value);
+
+    /**
+     * Device Proximity values from Proximity sensors.
+     */
+    private native void nativeGotProximity(
+            long nativeSensorManagerAndroid,
+            double value, double min, double max);
 
     /**
      * Need the an interface for SensorManager for testing.

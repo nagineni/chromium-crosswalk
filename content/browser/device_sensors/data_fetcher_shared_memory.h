@@ -11,6 +11,7 @@
 #include "content/common/device_sensors/device_light_hardware_buffer.h"
 #include "content/common/device_sensors/device_motion_hardware_buffer.h"
 #include "content/common/device_sensors/device_orientation_hardware_buffer.h"
+#include "content/common/device_sensors/device_proximity_hardware_buffer.h"
 #endif
 
 #if defined(OS_MACOSX)
@@ -37,6 +38,7 @@ class CONTENT_EXPORT DataFetcherSharedMemory
   DeviceMotionHardwareBuffer* motion_buffer_;
   DeviceOrientationHardwareBuffer* orientation_buffer_;
   DeviceLightHardwareBuffer* light_buffer_;
+  DeviceProximityHardwareBuffer* proximity_buffer_;
 #endif
 #if defined(OS_MACOSX)
   virtual void Fetch(unsigned consumer_bitmask) OVERRIDE;

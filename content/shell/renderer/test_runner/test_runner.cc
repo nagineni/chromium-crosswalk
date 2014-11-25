@@ -29,6 +29,7 @@
 #include "third_party/WebKit/public/platform/WebData.h"
 #include "third_party/WebKit/public/platform/WebDeviceMotionData.h"
 #include "third_party/WebKit/public/platform/WebDeviceOrientationData.h"
+#include "third_party/WebKit/public/platform/WebDeviceProximityData.h"
 #include "third_party/WebKit/public/platform/WebLocalCredential.h"
 #include "third_party/WebKit/public/platform/WebPoint.h"
 #include "third_party/WebKit/public/platform/WebURLResponse.h"
@@ -200,6 +201,7 @@ class TestRunnerBindings : public gin::Wrappable<TestRunnerBindings> {
   void SetMockDeviceMotion(gin::Arguments* args);
   void SetMockDeviceOrientation(gin::Arguments* args);
   void SetMockScreenOrientation(const std::string& orientation);
+  void SetMockDeviceProximity(gin::Arguments* args);
   void DidChangeBatteryStatus(bool charging,
                               double chargingTime,
                               double dischargingTime,
@@ -401,6 +403,8 @@ gin::ObjectTemplateBuilder TestRunnerBindings::GetObjectTemplateBuilder(
                  &TestRunnerBindings::SetMockDeviceMotion)
       .SetMethod("setMockDeviceOrientation",
                  &TestRunnerBindings::SetMockDeviceOrientation)
+      .SetMethod("setMockDeviceProximity",
+                 &TestRunnerBindings::SetMockDeviceProximity)
       .SetMethod("setMockScreenOrientation",
                  &TestRunnerBindings::SetMockScreenOrientation)
       .SetMethod("didChangeBatteryStatus",
@@ -926,6 +930,21 @@ void TestRunnerBindings::SetMockDeviceOrientation(gin::Arguments* args) {
                                     has_beta, beta,
                                     has_gamma, gamma,
                                     has_absolute, absolute);
+}
+
+void TestRunnerBindings::SetMockDeviceProximity(gin::Arguments* args) {
+  if (!runner_)
+    return;
+
+  double value;
+  double min;
+  double max;
+
+  args->GetNext(&value);
+  args->GetNext(&min);
+  args->GetNext(&max);
+
+  runner_->SetMockDeviceProximity(value, min, max);
 }
 
 void TestRunnerBindings::SetMockScreenOrientation(const std::string& orientation) {
@@ -2382,6 +2401,16 @@ void TestRunner::SetMockDeviceOrientation(bool has_alpha, double alpha,
   orientation.absolute = absolute;
 
   delegate_->SetDeviceOrientationData(orientation);
+}
+
+void TestRunner::SetMockDeviceProximity(bool value, double min, double max) {
+  WebDeviceProximityData proximity;
+
+  proximity.value = value;
+  proximity.min = min;
+  proximity.max = max;
+
+  delegate_->SetDeviceProximityData(proximity);
 }
 
 void TestRunner::SetMockScreenOrientation(const std::string& orientation_str) {

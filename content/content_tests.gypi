@@ -693,6 +693,7 @@
         'renderer/device_sensors/device_light_event_pump_unittest.cc',
         'renderer/device_sensors/device_motion_event_pump_unittest.cc',
         'renderer/device_sensors/device_orientation_event_pump_unittest.cc',
+        'renderer/device_sensors/device_proximity_event_pump_unittest.cc',
         'renderer/disambiguation_popup_helper_unittest.cc',
         'renderer/dom_storage/dom_storage_cached_area_unittest.cc',
         'renderer/gpu/frame_swap_message_queue_unittest.cc',

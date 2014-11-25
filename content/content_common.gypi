@@ -203,6 +203,8 @@
       'common/device_sensors/device_motion_messages.h',
       'common/device_sensors/device_orientation_hardware_buffer.h',
       'common/device_sensors/device_orientation_messages.h',
+      'common/device_sensors/device_proximity_hardware_buffer.h',
+      'common/device_sensors/device_proximity_messages.h',
       'common/devtools_messages.h',
       'common/dom_storage/dom_storage_map.cc',
       'common/dom_storage/dom_storage_map.h',

@@ -45,6 +45,7 @@ enum IPCMessageStart {
   DeviceLightMsgStart,
   DeviceMotionMsgStart,
   DeviceOrientationMsgStart,
+  DeviceProximityMsgStart,
   DesktopNotificationMsgStart,
   GeolocationMsgStart,
   AudioMsgStart,

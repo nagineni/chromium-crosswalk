@@ -12,6 +12,7 @@
 #include "content/common/device_sensors/device_light_hardware_buffer.h"
 #include "content/common/device_sensors/device_motion_hardware_buffer.h"
 #include "content/common/device_sensors/device_orientation_hardware_buffer.h"
+#include "content/common/device_sensors/device_proximity_hardware_buffer.h"
 
 template<typename T> struct DefaultSingletonTraits;
 
@@ -40,6 +41,7 @@ class CONTENT_EXPORT SensorManagerAndroid {
                                        double x, double y, double z);
   void GotRotationRate(JNIEnv*, jobject,
                        double alpha, double beta, double gamma);
+  void GotProximity(JNIEnv*, jobject, double value, double min, double max);
 
   // Shared memory related methods.
   bool StartFetchingDeviceLightData(DeviceLightHardwareBuffer* buffer);
@@ -52,14 +54,19 @@ class CONTENT_EXPORT SensorManagerAndroid {
       DeviceOrientationHardwareBuffer* buffer);
   void StopFetchingDeviceOrientationData();
 
+  bool StartFetchingDeviceProximityData(DeviceProximityHardwareBuffer* buffer);
+  void StopFetchingDeviceProximityData();
+
  protected:
   enum EventType {
-    // These constants should match DEVICE_ORIENTATION, DEVICE_MOTION and
-    // DEVICE_LIGHT constants in content/public/android/java/src/org/
+    // These constants should match DEVICE_ORIENTATION, DEVICE_MOTION,
+    // DEVICE_LIGHT and DEVICE_Proximity constants in
+    // content/public/android/java/src/org/
     // chromium/content/browser/DeviceSensors.java
     kTypeOrientation = 0,
     kTypeMotion = 1,
-    kTypeLight = 2
+    kTypeLight = 2,
+    kTypeProximity = 3
   };
 
   SensorManagerAndroid();
@@ -80,6 +87,7 @@ class CONTENT_EXPORT SensorManagerAndroid {
   };
 
   void SetLightBufferValue(double lux);
+  void SetProximityBufferValue(double lux, double min, double max);
 
   void CheckMotionBufferReadyToRead();
   void SetMotionBufferReadyStatus(bool ready);
@@ -94,13 +102,16 @@ class CONTENT_EXPORT SensorManagerAndroid {
   DeviceLightHardwareBuffer* device_light_buffer_;
   DeviceMotionHardwareBuffer* device_motion_buffer_;
   DeviceOrientationHardwareBuffer* device_orientation_buffer_;
+  DeviceProximityHardwareBuffer* device_proximity_buffer_;
   bool is_light_buffer_ready_;
   bool is_motion_buffer_ready_;
   bool is_orientation_buffer_ready_;
+  bool is_proximity_buffer_ready_;
 
   base::Lock light_buffer_lock_;
   base::Lock motion_buffer_lock_;
   base::Lock orientation_buffer_lock_;
+  base::Lock proximity_buffer_lock_;
 
   DISALLOW_COPY_AND_ASSIGN(SensorManagerAndroid);
 };

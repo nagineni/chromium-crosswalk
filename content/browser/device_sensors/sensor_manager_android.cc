@@ -29,9 +29,11 @@ SensorManagerAndroid::SensorManagerAndroid()
       device_light_buffer_(NULL),
       device_motion_buffer_(NULL),
       device_orientation_buffer_(NULL),
+      device_proximity_buffer_(NULL),
       is_light_buffer_ready_(false),
       is_motion_buffer_ready_(false),
-      is_orientation_buffer_ready_(false) {
+      is_orientation_buffer_ready_(false),
+      is_proximity_buffer_ready_(false) {
   memset(received_motion_data_, 0, sizeof(received_motion_data_));
   device_sensors_.Reset(Java_DeviceSensors_getInstance(
       AttachCurrentThread(), base::android::GetApplicationContext()));
@@ -148,9 +150,24 @@ void SensorManagerAndroid::GotLight(JNIEnv*, jobject, double value) {
   device_light_buffer_->seqlock.WriteEnd();
 }
 
-bool SensorManagerAndroid::Start(EventType event_type) {
+void SensorManagerAndroid::GotProximity(JNIEnv*, jobject, double value, double min, double max) {
+
+  base::AutoLock autolock(proximity_buffer_lock_);
+
+  if (!device_proximity_buffer_)
+    return;
+
+  device_proximity_buffer_->seqlock.WriteBegin();
+  device_proximity_buffer_->data.value = value;
+  device_proximity_buffer_->data.min = min;
+  device_proximity_buffer_->data.max = max;
+  device_proximity_buffer_->seqlock.WriteEnd();
+}
+
+ool SensorManagerAndroid::Start(EventType event_type) {
   DCHECK(!device_sensors_.is_null());
-  int rate_in_milliseconds = (event_type == kTypeLight)
+  int rate_in_milliseconds = (event_type == kTypeLight ||
+                              event_type == kTypeProximity)
                                  ? kLightSensorIntervalMillis
                                  : kInertialSensorIntervalMillis;
   return Java_DeviceSensors_start(AttachCurrentThread(),
@@ -320,6 +337,44 @@ void SensorManagerAndroid::StopFetchingDeviceOrientationData() {
       device_orientation_buffer_ = NULL;
     }
   }
+}
+// --- Device Proximity
+
+bool SensorManagerAndroid::StartFetchingDeviceProximityData(
+    DeviceProximityHardwareBuffer* buffer) {
+  DCHECK(buffer);
+  {
+    base::AutoLock autolock(proximity_buffer_lock_);
+    device_proximity_buffer_ = buffer;
+    SetProximityBufferValue(-1, -1, -1);
+  }
+  bool success = Start(kTypeProximity);
+  if (!success) {
+    base::AutoLock autolock(proximity_buffer_lock_);
+    SetProximityBufferValue(std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity());
+  }
+  return success;
+}
+
+void SensorManagerAndroid::StopFetchingDeviceProximityData() {
+  Stop(kTypeProximity);
+  {
+    base::AutoLock autolock(proximity_buffer_lock_);
+    if (device_proximity_buffer_) {
+      SetProximityBufferValue(-1, -1, -1);
+      device_proximity_buffer_ = NULL;
+    }
+  }
+}
+
+void SensorManagerAndroid::SetProximityBufferValue(double value, double min, double max) {
+  device_proximity_buffer_->seqlock.WriteBegin();
+  device_proximity_buffer_->data.value = value;
+  device_proximity_buffer_->data.min = min;
+  device_proximity_buffer_->data.max = max;
+  device_proximity_buffer_->seqlock.WriteEnd();
 }
 
 }  // namespace content

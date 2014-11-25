@@ -32,6 +32,7 @@ namespace blink {
 class WebBatteryStatus;
 class WebDeviceMotionData;
 class WebDeviceOrientationData;
+class WebDeviceProximityData;
 class WebGraphicsContext3DProvider;
 }
 
@@ -40,6 +41,7 @@ class BatteryStatusDispatcher;
 class DeviceLightEventPump;
 class DeviceMotionEventPump;
 class DeviceOrientationEventPump;
+class DeviceProximityEventPump;
 class PlatformEventObserverBase;
 class QuotaMessageFilter;
 class RendererClipboardClient;
@@ -174,6 +176,10 @@ class CONTENT_EXPORT RendererWebKitPlatformSupportImpl
   static void SetMockDeviceOrientationDataForTesting(
       const blink::WebDeviceOrientationData& data);
 
+  //  Set a double to return when setDeviceProximityListener is invoked.
+  static void SetMockDeviceProximityDataForTesting(
+      const blink::WebDeviceProximityData& data);
+
   // Notifies blink::WebBatteryStatusListener that battery status has changed.
   void MockBatteryStatusChangedForTesting(
       const blink::WebBatteryStatus& status);
@@ -224,6 +230,7 @@ class CONTENT_EXPORT RendererWebKitPlatformSupportImpl
   scoped_ptr<DeviceLightEventPump> device_light_event_pump_;
   scoped_ptr<DeviceMotionEventPump> device_motion_event_pump_;
   scoped_ptr<DeviceOrientationEventPump> device_orientation_event_pump_;
+  scoped_ptr<DeviceProximityEventPump> device_proximity_event_pump_;
 
   scoped_refptr<base::MessageLoopProxy> child_thread_loop_;
   scoped_refptr<IPC::SyncMessageFilter> sync_message_filter_;

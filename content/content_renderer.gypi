@@ -126,6 +126,8 @@
       'renderer/device_sensors/device_orientation_event_pump.cc',
       'renderer/device_sensors/device_orientation_event_pump.h',
       'renderer/device_sensors/device_sensor_event_pump.h',
+      'renderer/device_sensors/device_proximity_event_pump.cc',
+      'renderer/device_sensors/device_proximity_event_pump.h',
       'renderer/devtools/devtools_agent.cc',
       'renderer/devtools/devtools_agent.h',
       'renderer/devtools/devtools_agent_filter.cc',

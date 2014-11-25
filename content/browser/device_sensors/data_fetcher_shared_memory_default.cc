@@ -39,12 +39,25 @@ static bool SetLightBuffer(content::DeviceLightHardwareBuffer* buffer,
   return true;
 }
 
+static bool SetProximityBuffer(content::DeviceProximityHardwareBuffer* buffer,
+                           double value, double min, double max) {
+  if (!buffer)
+    return false;
+  buffer->seqlock.WriteBegin();
+  buffer->data.value = value;
+  buffer->data.value = min;
+  buffer->data.value = max;
+  buffer->seqlock.WriteEnd();
+  return true;
+}
+
 }  // namespace
 
 namespace content {
 
 DataFetcherSharedMemory::DataFetcherSharedMemory()
-    : motion_buffer_(NULL), orientation_buffer_(NULL), light_buffer_(NULL) {
+    : motion_buffer_(NULL), orientation_buffer_(NULL), light_buffer_(NULL),
+      proximity_buffer_(NULL) {
 }
 
 DataFetcherSharedMemory::~DataFetcherSharedMemory() {
@@ -68,6 +81,12 @@ bool DataFetcherSharedMemory::Start(ConsumerType consumer_type, void* buffer) {
       light_buffer_ = static_cast<DeviceLightHardwareBuffer*>(buffer);
       return SetLightBuffer(light_buffer_,
                             std::numeric_limits<double>::infinity());
+    case CONSUMER_TYPE_PROXIMITY:
+      proximity_buffer_ = static_cast<DeviceProximityHardwareBuffer*>(buffer);
+      return SetProximityBuffer(proximity_buffer_,
+                            std::numeric_limits<double>::infinity(),
+                            std::numeric_limits<double>::infinity(),
+                            std::numeric_limits<double>::infinity());
     default:
       NOTREACHED();
   }
@@ -82,6 +101,8 @@ bool DataFetcherSharedMemory::Stop(ConsumerType consumer_type) {
       return SetOrientationBuffer(orientation_buffer_, false);
     case CONSUMER_TYPE_LIGHT:
       return SetLightBuffer(light_buffer_, -1);
+    case CONSUMER_TYPE_PROXIMITY:
+      return SetProximityBuffer(proximity_buffer_, -1, -1, -1);
     default:
       NOTREACHED();
   }

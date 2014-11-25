@@ -12,6 +12,7 @@
 #include "content/common/device_sensors/device_light_hardware_buffer.h"
 #include "content/common/device_sensors/device_motion_hardware_buffer.h"
 #include "content/common/device_sensors/device_orientation_hardware_buffer.h"
+#include "content/common/device_sensors/device_proximity_hardware_buffer.h"
 
 namespace content {
 
@@ -25,6 +26,8 @@ static size_t GetConsumerSharedMemoryBufferSize(ConsumerType consumer_type) {
       return sizeof(DeviceOrientationHardwareBuffer);
     case CONSUMER_TYPE_LIGHT:
       return sizeof(DeviceLightHardwareBuffer);
+    case CONSUMER_TYPE_PROXIMITY:
+      return sizeof(DeviceProximityHardwareBuffer);
     default:
       NOTREACHED();
   }
@@ -169,6 +172,7 @@ void DataFetcherSharedMemoryBase::StopFetchingAllDeviceData() {
   StopFetchingDeviceData(CONSUMER_TYPE_MOTION);
   StopFetchingDeviceData(CONSUMER_TYPE_ORIENTATION);
   StopFetchingDeviceData(CONSUMER_TYPE_LIGHT);
+  StopFetchingDeviceData(CONSUMER_TYPE_PROXIMITY);
 }
 
 base::SharedMemoryHandle

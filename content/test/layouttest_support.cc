@@ -24,6 +24,7 @@
 #include "third_party/WebKit/public/platform/WebBatteryStatus.h"
 #include "third_party/WebKit/public/platform/WebDeviceMotionData.h"
 #include "third_party/WebKit/public/platform/WebDeviceOrientationData.h"
+#include "third_party/WebKit/public/platform/WebDeviceProximityData.h"
 #include "third_party/WebKit/public/platform/WebGamepads.h"
 #include "third_party/WebKit/public/web/WebHistoryItem.h"
 #include "third_party/WebKit/public/web/WebView.h"
@@ -35,6 +36,7 @@
 using blink::WebBatteryStatus;
 using blink::WebDeviceMotionData;
 using blink::WebDeviceOrientationData;
+using blink::WebDeviceProximityData;
 using blink::WebGamepad;
 using blink::WebGamepads;
 using blink::WebRect;
@@ -121,6 +123,10 @@ void SetMockDeviceMotionData(const WebDeviceMotionData& data) {
 void SetMockDeviceOrientationData(const WebDeviceOrientationData& data) {
   RendererWebKitPlatformSupportImpl::
       SetMockDeviceOrientationDataForTesting(data);
+}
+
+void SetMockDeviceProximityData(const WebDeviceProximityData& data) {
+  RendererBlinkPlatformImpl::SetMockDeviceProximityDataForTesting(data);
 }
 
 void MockBatteryStatusChanged(const WebBatteryStatus& status) {

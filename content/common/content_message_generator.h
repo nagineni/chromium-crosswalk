@@ -17,6 +17,7 @@
 #include "content/common/device_sensors/device_light_messages.h"
 #include "content/common/device_sensors/device_motion_messages.h"
 #include "content/common/device_sensors/device_orientation_messages.h"
+#include "content/common/device_sensors/device_proximity_messages.h"
 #include "content/common/devtools_messages.h"
 #include "content/common/dom_storage/dom_storage_messages.h"
 #include "content/common/drag_messages.h"

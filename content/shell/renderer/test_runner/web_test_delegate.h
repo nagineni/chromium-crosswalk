@@ -19,6 +19,7 @@ namespace blink {
 class WebBatteryStatus;
 class WebDeviceMotionData;
 class WebDeviceOrientationData;
+class WebDeviceProximityData;
 class WebFrame;
 class WebGamepad;
 class WebGamepads;
@@ -63,6 +64,11 @@ class WebTestDelegate {
   // Platform::setScreenOrientationListener().
   virtual void SetScreenOrientation(
       const blink::WebScreenOrientationType& orientation) = 0;
+
+  // Set data to return when registering via
+  // Platform::setDeviceProximityListener().
+  virtual void SetDeviceProximityData(
+      const blink::WebDeviceProximityData& data) = 0;
 
   // Reset the screen orientation data used for testing.
   virtual void ResetScreenOrientation() = 0;

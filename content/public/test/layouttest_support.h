@@ -18,6 +18,7 @@ namespace blink {
 class WebBatteryStatus;
 class WebDeviceMotionData;
 class WebDeviceOrientationData;
+class WebDeviceProximityData;
 class WebGamepad;
 class WebGamepads;
 class WebLayer;
@@ -60,6 +61,10 @@ void SetMockGamepadProvider(scoped_ptr<RendererGamepadProvider> provider);
 // Sets a double that should be used when registering
 // a listener through WebKitPlatformSupport::setDeviceLightListener().
 void SetMockDeviceLightData(const double data);
+
+// Sets a double that should be used when registering
+// a listener through BlinkPlatformImpl::setDeviceProximityListener().
+void SetMockDeviceProximityData(const double data);
 
 // Sets WebDeviceMotionData that should be used when registering
 // a listener through WebKitPlatformSupport::setDeviceMotionListener().

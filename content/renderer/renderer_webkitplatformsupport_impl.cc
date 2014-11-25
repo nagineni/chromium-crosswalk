@@ -41,6 +41,7 @@
 #include "content/renderer/device_sensors/device_light_event_pump.h"
 #include "content/renderer/device_sensors/device_motion_event_pump.h"
 #include "content/renderer/device_sensors/device_orientation_event_pump.h"
+#include "content/renderer/device_sensors/device_proximity_event_pump.h"
 #include "content/renderer/dom_storage/webstoragenamespace_impl.h"
 #include "content/renderer/gamepad_shared_memory_reader.h"
 #include "content/renderer/media/audio_decoder.h"
@@ -67,6 +68,7 @@
 #include "third_party/WebKit/public/platform/WebDeviceLightListener.h"
 #include "third_party/WebKit/public/platform/WebDeviceMotionListener.h"
 #include "third_party/WebKit/public/platform/WebDeviceOrientationListener.h"
+#include "third_party/WebKit/public/platform/WebDeviceProximityListener.h"
 #include "third_party/WebKit/public/platform/WebFileInfo.h"
 #include "third_party/WebKit/public/platform/WebGamepads.h"
 #include "third_party/WebKit/public/platform/WebMediaStreamCenter.h"
@@ -150,6 +152,8 @@ base::LazyInstance<blink::WebDeviceMotionData>::Leaky
     g_test_device_motion_data = LAZY_INSTANCE_INITIALIZER;
 base::LazyInstance<blink::WebDeviceOrientationData>::Leaky
     g_test_device_orientation_data = LAZY_INSTANCE_INITIALIZER;
+base::LazyInstance<blink::WebDeviceProximityData>::Leaky
+   g_test_device_proximity_data = LAZY_INSTANCE_INITIALIZER;
 
 } // namespace
 
@@ -1035,6 +1039,14 @@ void RendererWebKitPlatformSupportImpl::SetMockDeviceOrientationDataForTesting(
 
 //------------------------------------------------------------------------------
 
+// static
+void RendererBlinkPlatformImpl::SetMockDeviceProximityDataForTesting(
+    const blink::WebDeviceProximityData& data) {
+  g_test_device_proximity_data.Get() = data;
+}
+
+//------------------------------------------------------------------------------
+
 void RendererWebKitPlatformSupportImpl::vibrate(unsigned int milliseconds) {
   RenderThread::Get()->Send(
       new ViewHostMsg_Vibrate(base::checked_cast<int64>(milliseconds)));
@@ -1068,6 +1080,8 @@ RendererWebKitPlatformSupportImpl::CreatePlatformEventObserverFromType(
   case blink::WebPlatformEventDeviceLight: {
     return new DeviceLightEventPump(thread);
   }
+  case blink::WebPlatformEventDeviceProximity:
+     return new DeviceProximityEventPump(thread);
   case blink::WebPlatformEventBattery: {
     return new BatteryStatusDispatcher(thread);
   }
@@ -1114,7 +1128,8 @@ void RendererWebKitPlatformSupportImpl::startListening(
       RenderThreadImpl::current()->layout_test_mode() &&
       (type == blink::WebPlatformEventDeviceMotion ||
        type == blink::WebPlatformEventDeviceOrientation ||
-       type == blink::WebPlatformEventDeviceLight)) {
+       type == blink::WebPlatformEventDeviceLight ||
+       type == blink::WebPlatformEventDeviceProximity)) {
     SendFakeDeviceEventDataForTesting(type);
   }
 }
@@ -1138,6 +1153,10 @@ void RendererWebKitPlatformSupportImpl::SendFakeDeviceEventDataForTesting(
   case blink::WebPlatformEventDeviceLight:
     if (g_test_device_light_data >= 0)
       data = &g_test_device_light_data;
+    break;
+  case blink::WebPlatformEventDeviceProximity:
+    if (!(g_test_device_proximity_data == 0))
+      data = &g_test_device_proximity_data.Get();
     break;
   default:
     NOTREACHED();

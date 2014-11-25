@@ -73,6 +73,7 @@ using blink::WebContextMenuData;
 using blink::WebDevToolsAgent;
 using blink::WebDeviceMotionData;
 using blink::WebDeviceOrientationData;
+using blink::WebDeviceProximityData;
 using blink::WebElement;
 using blink::WebLocalFrame;
 using blink::WebHistoryItem;
@@ -219,6 +220,11 @@ void WebKitTestRunner::SetDeviceMotionData(const WebDeviceMotionData& data) {
 void WebKitTestRunner::SetDeviceOrientationData(
     const WebDeviceOrientationData& data) {
   SetMockDeviceOrientationData(data);
+}
+
+void WebKitTestRunner::SetDeviceProximityData(
+    const WebDeviceProximityData& data) {
+  SetMockDeviceProximityData(data);
 }
 
 void WebKitTestRunner::SetScreenOrientation(
